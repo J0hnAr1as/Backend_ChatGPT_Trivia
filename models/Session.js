@@ -1,23 +1,23 @@
 import mongoose from 'mongoose';
 
-const SessionSchema = new mongoose.Schema({
+const sessionSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
   },
   type: {
     type: String,
-    enum: ['quiz', 'chat'],
+    enum: ['chat', 'quiz'],
     default: 'quiz'
   },
   questionType: {
     type: String,
-    enum: ['multiple-choice', 'true-false', 'open-ended'],
+    enum: ['multiple-choice', 'true-false', 'open-ended', 'mixed'],
     default: 'multiple-choice'
   },
   topic: {
     type: String,
-    default: ''
+    required: false
   },
   createdAt: {
     type: Date,
@@ -25,6 +25,6 @@ const SessionSchema = new mongoose.Schema({
   }
 });
 
-const Session = mongoose.models.Session || mongoose.model('Session', SessionSchema);
+const Session = mongoose.model('Session', sessionSchema);
 
 export default Session;

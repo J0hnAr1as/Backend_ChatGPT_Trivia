@@ -342,6 +342,42 @@ export const generateQuiz = async (req, res) => {
           }
         ]
       }`;
+    } else if (questionType === 'mixed') {
+      prompt = `Actúa como un profesor que crea una trivia sobre "${topic}".
+      ${content ? 'Basándote en el siguiente contenido: ' + content.substring(0, 5000) : ''}
+      Genera exactamente ${questionCount || 5} preguntas con una combinación de preguntas tipo opción múltiple y verdadero/falso.
+      
+      Para las preguntas de opción múltiple:
+      - Incluye 4 opciones (a, b, c, d)
+      - Marca claramente la respuesta correcta
+      - Añade el campo "type": "multiple-choice" en cada pregunta
+      
+      Para las preguntas de verdadero/falso:
+      - Escribe una afirmación
+      - Especifica si es verdadera o falsa
+      - Añade el campo "type": "true-false" en cada pregunta
+      
+      Para todas las preguntas, proporciona una explicación de por qué la respuesta es correcta.
+      Usa emojis para hacer el contenido más atractivo.
+      
+      Formatea tu respuesta como un objeto JSON con esta estructura exacta:
+      {
+        "questions": [
+          {
+            "type": "multiple-choice",
+            "question": "¿Pregunta 1?",
+            "options": ["opción a", "opción b", "opción c", "opción d"],
+            "correctAnswer": "a",
+            "explanation": "Explicación de por qué esta respuesta es correcta"
+          },
+          {
+            "type": "true-false",
+            "statement": "Afirmación 2",
+            "isTrue": true/false,
+            "explanation": "Explicación de por qué esta afirmación es verdadera/falsa"
+          }
+        ]
+      }`;
     } else { // open-ended
       prompt = `Actúa como un profesor que crea un cuestionario de preguntas abiertas sobre "${topic}". 
       ${content ? 'Basándote en el siguiente contenido: ' + content.substring(0, 5000) : ''}

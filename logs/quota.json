@@ -1,11 +1,22 @@
 {
-  "requestsToday": 20,
+  "requestsToday": 1,
   "requestsThisMinute": 1,
-  "lastMinuteTimestamp": 1745554640639,
-  "dailyReset": "2025-04-25",
+  "lastMinuteTimestamp": 1746739389322,
+  "dailyReset": "2025-05-08",
   "minuteQuota": 60,
   "dailyQuota": 120,
   "quotaExceededCount": 0,
-  "lastUpdate": "2025-04-25T04:17:20.639Z",
-  "history": []
+  "lastUpdate": "2025-05-08T21:23:09.322Z",
+  "history": [
+    {
+      "date": "2025-05-06",
+      "requests": 0,
+      "quotaExceeds": 0
+    },
+    {
+      "date": "2025-05-08",
+      "requests": 0,
+      "quotaExceeds": 0
+    }
+  ]
 }
