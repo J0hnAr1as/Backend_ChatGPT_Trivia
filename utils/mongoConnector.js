@@ -23,28 +23,49 @@ class MongoConnector {
   
   // Conectar a MongoDB con reintento automático
   async connect(uri) {
-    // Si ya estamos en proceso de conexión, salir
-    if (this.isConnecting) return;
-    
-    this.isConnecting = true;
-    this.connectionAttempts++;
-    
     try {
+      if (this.isConnecting) {
+        console.log('MongoDB ya está conectado');
+        return;
+      }
+
+      this.isConnecting = true;
+      this.connectionAttempts++;
+      
       console.log(`Intentando conectar a MongoDB (intento ${this.connectionAttempts}/${this.maxConnectionAttempts})`);
       
-      // Conectar con opciones específicas según el entorno
-      await mongoose.connect(uri, {
-        ...MONGODB_OPTIONS,
-        serverSelectionTimeoutMS: this.serverSelectionTimeout
-      });
-      
-      console.log('✅ MongoDB conectado correctamente');
+      const options = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        serverSelectionTimeoutMS: this.serverSelectionTimeout,
+        socketTimeoutMS: 45000,
+      };
+
+      await mongoose.connect(uri, options);
       this.isConnecting = false;
       this.connectionAttempts = 0;
+      console.log('✅ Conexión a MongoDB establecida correctamente');
+
+      mongoose.connection.on('error', (err) => {
+        console.error('❌ Error en la conexión de MongoDB:', err);
+        this.isConnecting = false;
+      });
+
+      mongoose.connection.on('disconnected', () => {
+        console.log('⚠️ MongoDB desconectado');
+        this.isConnecting = false;
+      });
+
+      process.on('SIGINT', async () => {
+        await mongoose.connection.close();
+        console.log('MongoDB desconectado debido a la terminación de la aplicación');
+        process.exit(0);
+      });
+
     } catch (error) {
       this.isConnecting = false;
       
-      console.error('❌ Error al conectar a MongoDB:', error.message);
+      console.error('❌ Error al conectar con MongoDB:', error);
       
       // Mostrar mensajes de ayuda específicos según el error
       if (error.name === 'MongooseServerSelectionError') {
@@ -77,9 +98,14 @@ class MongoConnector {
   
   // Cerrar conexión
   async disconnect() {
-    if (this.isConnected()) {
-      await mongoose.disconnect();
-      console.log('Desconectado de MongoDB');
+    if (!this.isConnected()) return;
+    
+    try {
+      await mongoose.connection.close();
+      console.log('MongoDB desconectado correctamente');
+    } catch (error) {
+      console.error('Error al desconectar MongoDB:', error);
+      throw error;
     }
   }
 }
