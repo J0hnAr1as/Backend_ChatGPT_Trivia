@@ -109,7 +109,7 @@ if (!process.env.GEMINI_API_KEY) {
     const envExamplePath = path.join(__dirname, '.env.example');
     if (!fs.existsSync(envExamplePath)) {
       try {
-        fs.writeFileSync(envExamplePath, 'PORT=5000\nMONGODB_URI=mongodb://localhost:27017/study-buddy-app\nGEMINI_API_KEY=tu-api-key-de-gemini-aqui\n');
+        fs.writeFileSync(envExamplePath, 'PORT=5000\nmongodb+srv://CONECCION:@cluster0.9qwz3.mongodb.net/chat-gpt-app?retryWrites=true&w=majority&appName=Cluster0\nGEMINI_API_KEY=tu-api-key-de-gemini-aqui\n');
         console.log(`✅ Archivo .env.example creado: ${envExamplePath}`);
         console.log('Por favor, copia este archivo a .env y agrega tu API key de Gemini');
       } catch (err) {
@@ -127,7 +127,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/study-buddy-app';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://CONECCION:@cluster0.9qwz3.mongodb.net/chat-gpt-app?retryWrites=true&w=majority&appName=Cluster0';
 
 // Conexión a MongoDB mejorada
 mongoConnector.connect(MONGODB_URI)
@@ -143,7 +143,7 @@ app.get('/', (req, res) => {
   const diagnosticInfo = vercelEnvironment ? runDiagnostic() : { message: 'Diagnóstico solo disponible en Vercel' };
   
   res.json({ 
-    message: 'API de Study Buddy funcionando correctamente',
+    message: 'API de chat-gpt-app funcionando correctamente',
     status: 'Gemini configurado correctamente',
     environment: vercelEnvironment ? 'Vercel' : 'Desarrollo local',
     mongoStatus: mongoConnector.isConnected() ? 'conectado' : 'desconectado',
